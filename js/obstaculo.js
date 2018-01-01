@@ -9,6 +9,9 @@ var Obstaculo = function (sprite, x, y, ancho, alto, potencia) {
   this.alto = alto;
   this.potencia = potencia;
 
-  // Implementar el metodo chocar(jugador) para que al chocar con un obstaculo
-  // el jugador pierda vidas
+  // El jugador pierde vidas  
+  this.chocar = function (jugador) {
+    jugador.perderVida(this.potencia);
+    this.potencia = 0;
+  };
 }

@@ -11,9 +11,19 @@ canvas {
 .boton-recargar {
   margin: auto;
   display: flex;
-  background: none;
   border: none;
-  color: white;
-  font-family: monospace;
   visibility: hidden;
+  cursor: pointer;
+  margin-top: 20px;
+  color: purple;
+  padding: 10px;
+  background: #00d426;
+  border-radius: 10px;
+  font-size: 17px;
+  font-weight: bolder;
+  letter-spacing: 1px;
+}
+
+.boton-recargar:hover {
+  background: #009b1c;
 }
