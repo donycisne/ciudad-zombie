@@ -1,20 +1,9 @@
-/* El objeto Juego sera el encargado del control de todo el resto de los Objetos
-existentes.
-Le dara ordenes al Dibujante para que dibuje entidades en la pantalla. Cargara
-el mapa, chequeara colisiones entre los objetos y actualizara sus movimientos
-y ataques. Gran parte de su implementacion esta hecha, pero hay espacios con el
-texto COMPLETAR que deben completarse segun lo indique la consigna.
-
-El objeto Juego contiene mucho codigo. Tomate tu tiempo para leerlo tranquilo
-y entender que es lo que hace en cada una de sus partes. */
 
 var Juego = {
-  // Aca se configura el tamanio del canvas del juego
   anchoCanvas: 961,
   altoCanvas: 577,
   jugador: Jugador,
   vidasInicial: Jugador.vidas,
-  // Indica si el jugador gano
   ganador: false,
 
   obstaculosCarretera: [
@@ -52,7 +41,7 @@ var Juego = {
     new Obstaculo('', 279, 23, 664, 56, 2),
     new Obstaculo('', 887, 79, 56, 480, 2)
   ],
-  
+
   enemigos: [
     new ZombieCaminante("imagenes/zombie1.png", 20, 280, 10, 10, 1, {desdeX: 20, hastaX: 941, desdeY: 20, hastaY: 557}, 0),
     new ZombieCaminante("imagenes/zombie2.png", 20, 400, 10, 10, 1, {desdeX: 20, hastaX: 941, desdeY: 20, hastaY: 557}, 0),
@@ -90,17 +79,15 @@ Juego.iniciarRecursos = function() {
   Resources.onReady(this.comenzar.bind(Juego));
 };
 
-// Agrega los bordes de las veredas a los obstaculos de la carretera
 Juego.obstaculos = function() {
   return this.obstaculosCarretera.concat(this.bordes);
 };
 
 Juego.comenzar = function() {
-  // Inicializar el canvas del juego
   Dibujante.inicializarCanvas(this.anchoCanvas, this.altoCanvas);
   /* El bucle principal del juego se llamara continuamente para actualizar
   los movimientos y el pintado de la pantalla. Sera el encargado de calcular los
-  ataques, colisiones, etc*/  
+  ataques, colisiones, etc*/
   this.buclePrincipal();
 };
 
@@ -117,14 +104,12 @@ Juego.update = function() {
   this.calcularAtaques();
   this.moverEnemigos();
 }
-// Captura las teclas y si coincide con alguna de las flechas tiene que
-// hacer que el jugador principal se mueva
+
 Juego.capturarMovimiento = function(tecla) {
   var movX = 0;
   var movY = 0;
   var velocidad = this.jugador.velocidad;
 
-  // El movimiento esta determinado por la velocidad del jugador
   if (tecla == 'izq') {
     movX = -velocidad;
   }
@@ -137,9 +122,8 @@ Juego.capturarMovimiento = function(tecla) {
   if (tecla == 'abajo') {
     movY = velocidad;
   }
-  // Si se puede mover hacia esa posicion hay que hacer efectivo este movimiento
+
   if (this.chequearColisiones(movX + this.jugador.x, movY + this.jugador.y)) {
-    // Mover al jugador
     Jugador.mover(movX, movY);
   }
 };
@@ -150,7 +134,7 @@ Juego.dibujar = function() {
   //Se pinta la imagen de fondo segun el estado del juego
   this.dibujarFondo();
   // Dibujar al jugador principal
-  Dibujante.dibujarEntidad(Jugador);  
+  Dibujante.dibujarEntidad(Jugador);
   // Se recorren los obstaculos de la carretera pintandolos
   this.obstaculosCarretera.forEach(function(obstaculo) {
     Dibujante.dibujarEntidad(obstaculo);
@@ -170,19 +154,14 @@ Juego.dibujar = function() {
   Dibujante.dibujarRectangulo('purple', 760, 550, 126, 8);
 };
 
-/* Recorre los enemigos haciendo que se muevan. De la misma forma que hicimos
-un recorrido por los enemigos para dibujarlos en pantalla ahora habra que hacer
-una funcionalidad similar pero para que se muevan.*/
 Juego.moverEnemigos = function() {
   this.enemigos.forEach(function(enemigo){
     enemigo.mover();
-  })  
+  })
 };
 
 /* Recorre los enemigos para ver cual esta colisionando con el jugador
-Si colisiona empieza el ataque el zombie, si no, deja de atacar.
-Para chequear las colisiones estudiar el metodo posicionValida. Alli
-se ven las colisiones con los obstaculos. En este caso sera con los zombies. */
+Si colisiona empieza el ataque el zombie, si no, deja de atacar.*/
 Juego.calcularAtaques = function() {
   this.enemigos.forEach(function(enemigo) {
     if (this.intersecan(enemigo, this.jugador, this.jugador.x, this.jugador.y)) {
@@ -192,7 +171,6 @@ Juego.calcularAtaques = function() {
     }
   }, this);
 };
-
 
 /* Aca se chequea si el jugador se peude mover a la posicion destino.
  Es decir, que no haya obstaculos que se interpongan. De ser asi, no podra moverse */
@@ -229,14 +207,14 @@ function ocultarMapa(){
 }
 
 Juego.dibujarFondo = function() {
-  // Si se termino el juego hay que mostrar el mensaje de game over de fondo
+  // Si se termino el juego se muestra el mensaje de game over
   if (this.terminoJuego()) {
     Dibujante.dibujarImagen('imagenes/mensaje_gameover.png', 0, 5, this.anchoCanvas, this.altoCanvas);
     document.getElementById('reiniciar').style.visibility = 'visible';
     ocultarMapa();
   }
 
-  // Si se gano el juego hay que mostrar el mensaje de ganoJuego de fondo
+  // Si se gano el juego se muestra el mensaje ganador
   else if (this.ganoJuego()) {
     Dibujante.dibujarImagen('imagenes/Splash.png', 190, 113, 500, 203);
     document.getElementById('reiniciar').style.visibility = 'visible';
@@ -250,7 +228,7 @@ Juego.terminoJuego = function() {
   return this.jugador.vidas <= 0;
 };
 
-/* Se gana el juego si se sobre pasa cierto altura y */
+/* Se gana el juego si se llega a la altura y */
 Juego.ganoJuego = function() {
   return (this.jugador.y + this.jugador.alto) >= 550;
 };
